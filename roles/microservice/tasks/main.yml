@@ -1,0 +1,25 @@
+---
+- name: remove python3 
+  shell: apt-get remove python3 -y
+
+- name: Install pip 
+  apt:
+    name: python-pip
+    state: latest
+
+- name: clone-code on server
+  git:
+    repo: https://github.com/sagyvm/microservice.git
+    dest: /home/ubuntu/api
+
+- name: Install dependent modules
+  shell: pip install -r /home/ubuntu/api/requirement.txt
+
+- name: Run 1st microservice
+  shell: cd /home/ubuntu/api && nohup python app_1.py &
+
+- name: Run 2nd microservice
+  shell: cd /home/ubuntu/api && nohup python app_2.py &
+
+- name: Run 3rd microservice
+  shell: cd /home/ubuntu/api && nohup python app_3.py &
