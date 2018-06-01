@@ -8,18 +8,18 @@
       username: admin
       password: nomoresecret
       project_name: admin
-    name: deployment1
+    name: development
     availability_zone: nova
     region_name: RegionOne
     image: 1834cc5f-87cc-4e67-9aae-2504b186abea
     network: 6be87a17-67db-4c11-b776-1b98cf5b4032 
     key_name: demo
     timeout: 200
-    flavor: ds1G
+    flavor: m1.small
     security_groups: default
     userdata: |
           {%- raw -%}#!/bin/bash
-          echo "127.0.0.1  localhost deployment1" >> /etc/hosts
+          echo "127.0.0.1  localhost development" >> /etc/hosts
           {% endraw %}
   environment:
     OS_PROJECT_DOMAIN_ID: "default"
