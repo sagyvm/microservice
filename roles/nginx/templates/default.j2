@@ -1,0 +1,19 @@
+server {
+       listen 80 default_server;
+       listen [::]:80 default_server;
+       server_name _;       location /movies {
+               # First attempt to serve request as file, then
+               # as directory, then fall back to displaying a 404.
+               #try_files $uri $uri/ =404;
+               include proxy_params;
+               proxy_pass http://172.24.4.4:5001;
+       }
+       location /showtimes {
+               include proxy_params;
+               proxy_pass http://172.24.4.9:5002;
+       }
+	location /bookings {
+               include proxy_params;
+               proxy_pass http://172.24.4.9:5003;
+       }
+}

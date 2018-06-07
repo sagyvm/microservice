@@ -1,0 +1,64 @@
+---
+
+- name: launch an instance
+  os_server:
+    state: present
+    auth:
+      auth_url: http://192.168.0.232/identity
+      username: admin
+      password: nomoresecret
+      project_name: admin
+    name: bookings
+    availability_zone: nova
+    region_name: RegionOne
+    image: 1834cc5f-87cc-4e67-9aae-2504b186abea
+    network: 6be87a17-67db-4c11-b776-1b98cf5b4032 
+    key_name: demo
+    timeout: 200
+    flavor: m1.small
+    security_groups: default
+    userdata: |
+          {%- raw -%}#!/bin/bash
+          echo "127.0.0.1  localhost bookings" >> /etc/hosts
+          echo "192.168.0.166  gitlab.opcito.com" >> /etc/hosts
+          {% endraw %}
+  environment:
+    OS_PROJECT_DOMAIN_ID: "default"
+    OS_USER_DOMAIN_NAME: "default"
+  tags:
+    - bookings
+
+- name: launch an instance
+  os_server:
+    state: present
+    auth:
+      auth_url: http://192.168.0.232/identity
+      username: admin
+      password: nomoresecret
+      project_name: admin
+    name: movies
+    availability_zone: nova
+    region_name: RegionOne
+    image: 1834cc5f-87cc-4e67-9aae-2504b186abea
+    network: 6be87a17-67db-4c11-b776-1b98cf5b4032
+    key_name: demo
+    timeout: 200
+    flavor: m1.small
+    security_groups: default
+    userdata: |
+          {%- raw -%}#!/bin/bash
+          echo "127.0.0.1  localhost movies" >> /etc/hosts
+          echo "192.168.0.166  gitlab.opcito.com" >> /etc/hosts
+          {% endraw %}
+  environment:
+    OS_PROJECT_DOMAIN_ID: "default"
+    OS_USER_DOMAIN_NAME: "default"
+  tags:
+    - movies
+
+- name: add 1 minute delay
+  pause:
+    minutes: 1
+  tags: 
+    - bookings
+    - movies

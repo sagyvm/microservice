@@ -1,0 +1,71 @@
+---
+#- name: remove python3 
+#  shell: apt-get remove python3 -y
+
+- name: Install pip 
+  apt:
+    update_cache: yes
+    name: python-pip
+    state: latest
+  tags:
+    - movies
+    - bookings
+    - showtimes
+
+- name: clone-code on server
+  git:
+    repo: http://gitlab.opcito.com/root/openstack.git
+    dest: /home/ubuntu/api
+  tags:
+    - movies
+    - bookings
+    - showtimes
+
+- name: Install dependent modules
+  shell: pip install -r /home/ubuntu/api/requirement.txt
+  tags:
+    - movies
+    - bookings
+    - showtimes
+
+- name: setup application for flask
+  shell: cd /home/ubuntu/api && python setup.py install && python setup.py develop
+  tags:
+    - movies
+    - bookings
+    - showtimes
+
+- name: remove old movies list microservice
+  shell: sudo su && ps aux | grep -ie 'services/movies.py' | awk {'print$2'}  | xargs kill -9
+  ignore_errors: yes
+  tags:
+    - movies
+
+- name: Run movies list microservice
+  shell: cd /home/ubuntu/api && nohup python services/movies.py &
+  tags:
+    - movies
+
+- name: remove old showtimes microservice
+  shell: ps aux | grep -ie 'services/showtimes.py' | awk {'print$2'}  | xargs kill -9
+  ignore_errors: yes
+  args:
+    executable: /bin/bash
+  tags:
+    - showtimes
+
+- name: Run showtimes microservice
+  shell: cd /home/ubuntu/api && nohup python services/showtimes.py  &
+  tags:
+    - showtimes
+
+- name: remove old bookings microservice
+  shell: sudo su && ps aux | grep -ie 'services/bookings.py' | awk {'print$2'}  | xargs kill -9
+  ignore_errors: yes
+  tags:
+    - bookings
+
+- name: Run bookings microservice
+  shell: cd /home/ubuntu/api && nohup python services/bookings.py  &
+  tags:
+    - bookings
